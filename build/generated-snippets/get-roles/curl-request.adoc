@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://test.com/v1/jwt/roles' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIiwiUk9MRV9URVNUIl0sImlhdCI6MTY1MjQ1MDYzNCwiZXhwIjoxNjUyNDU0MjM0fQ.gnh1Av4lGXp1lutsiaTE28C7a1THg0xMiie2lTUUGRY'
+----
