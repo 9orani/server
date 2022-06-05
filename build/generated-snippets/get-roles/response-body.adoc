@@ -1,9 +1,0 @@
-[source,options="nowrap"]
-----
-{
-  "success" : true,
-  "code" : 0,
-  "msg" : "성공하였습니다.",
-  "list" : [ "ROLE_USER", "ROLE_TEST" ]
-}
-----
