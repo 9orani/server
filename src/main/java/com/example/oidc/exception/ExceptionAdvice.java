@@ -1,5 +1,6 @@
 package com.example.oidc.exception;
 
+import com.example.oidc.exception.player.CustomPlayerNotFoundException;
 import com.example.oidc.exception.sign.CustomAuthenticationEntryPointException;
 import com.example.oidc.exception.sign.CustomLoginIdSigninFailedException;
 import com.example.oidc.exception.sign.CustomSignUpFailedException;
@@ -68,10 +69,18 @@ public class ExceptionAdvice {
   }
 
   @ExceptionHandler(CustomSignUpFailedException.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
   public CommonResult signUpFailedException(HttpServletRequest request,
       CustomSignUpFailedException e) {
     return responseService.getFailResult(Integer.parseInt(getMessage("signUpFailed.code")),
         e.getMessage() == null ? getMessage("signUpFailed.msg") : e.getMessage());
+  }
+
+  @ExceptionHandler(CustomPlayerNotFoundException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public CommonResult playerNotFoundException(HttpServletRequest request,
+      CustomPlayerNotFoundException e) {
+    return responseService.getFailResult(Integer.parseInt(getMessage("playerNotFound.code")),
+        e.getMessage() == null ? getMessage("playerNotFound.msg") : e.getMessage());
   }
 }
