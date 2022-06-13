@@ -42,7 +42,7 @@ class SignInControllerTest extends ApiControllerTestHelper {
         + "    \"password\": \"" + password + "\"\n"
         + "}";
 
-    mockMvc.perform(post("/v1/auth/sign-in")
+    mockMvc.perform(post("/v1/auth/signIn")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(content))
         .andDo(print())

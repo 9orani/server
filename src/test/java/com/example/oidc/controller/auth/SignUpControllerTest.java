@@ -34,7 +34,7 @@ class SignUpControllerTest extends ApiControllerTestHelper {
         + "    \"username\": \"" + username + "\"\n"
         + "}";
 
-    mockMvc.perform(post("/v1/auth/sign-up")
+    mockMvc.perform(post("/v1/auth/signUp")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(content))
         .andDo(print())

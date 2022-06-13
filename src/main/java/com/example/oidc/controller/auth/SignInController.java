@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/auth/sign-in")
+@RequestMapping("/v1/auth/signIn")
 public class SignInController {
 
   private final ResponseService responseService;
