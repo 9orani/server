@@ -23,7 +23,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider { // JWT 토큰을 생성 및 검증 모듈
 
-  @Value("spring.jwt.secret")
+  public static final Long tokenValidMillisecond = 60 * 60 * 1000L; // 1hour
+
+  @Value("${spring.jwt.secret}")
   private String secretKey;
 
   @PostConstruct
