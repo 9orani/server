@@ -58,7 +58,7 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
   }
 
   public String getToken(PlayerEntity player) {
-    return "Bearer " + jwtTokenProvider.createToken(String.valueOf(player.getId()),
+    return jwtTokenProvider.createToken(String.valueOf(player.getId()),
         List.of("ROLE_USER"), tokenValidMillisecond);
   }
 

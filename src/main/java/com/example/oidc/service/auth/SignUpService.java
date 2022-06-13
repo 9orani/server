@@ -25,7 +25,7 @@ public class SignUpService {
     String hashedPassword = passwordEncoder.encode(playerDto.getPassword());
     PlayerEntity newPlayer = playerRepository.save(playerDto.toEntity(hashedPassword));
 
-    String token = "Bearer " + jwtTokenProvider.createToken(String.valueOf(newPlayer.getId()),
+    String token = jwtTokenProvider.createToken(String.valueOf(newPlayer.getId()),
         List.of("ROLE_USER"), tokenValidMillisecond);
 
     return AuthDto.toDto(newPlayer, token);

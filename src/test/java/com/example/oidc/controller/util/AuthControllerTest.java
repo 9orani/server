@@ -24,7 +24,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
   public void getRolesSuccess() throws Exception {
     long validTime = 1000L * 60 * 60;
     String validToken =
-        "Bearer " + jwtTokenProvider.createToken(String.valueOf(userPk), roles, validTime);
+        jwtTokenProvider.createToken(String.valueOf(userPk), roles, validTime);
 
     String docSuccess = "성공: true +\n실패: false";
     String docCode =
@@ -59,7 +59,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
   public void getRolesFailedByInvalidToken() throws Exception {
     long validTime = 1000L * 60 * 60;
     String validToken =
-        "Bearer " + jwtTokenProvider.createToken(String.valueOf(userPk), roles, validTime);
+        jwtTokenProvider.createToken(String.valueOf(userPk), roles, validTime);
     String invalidToken1 = validToken.replace("Bearer", "OIDC");
     String invalidToken2 = validToken.substring(0, validToken.length() - 3);
 
@@ -81,7 +81,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
   public void getRolesFailedByExpiredToken() throws Exception {
     long invalidTime = 0L;
     String invalidToken =
-        "Bearer " + jwtTokenProvider.createToken(String.valueOf(userPk), roles, invalidTime);
+        jwtTokenProvider.createToken(String.valueOf(userPk), roles, invalidTime);
 
     mockMvc.perform(get("/v1/jwt/roles")
             .header("Authorization", invalidToken))

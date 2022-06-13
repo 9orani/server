@@ -31,7 +31,7 @@ public class SignInService {
       throw new CustomLoginIdSigninFailedException();
     }
 
-    String token = "Bearer " + jwtTokenProvider.createToken(String.valueOf(signInPlayer.getId()),
+    String token = jwtTokenProvider.createToken(String.valueOf(signInPlayer.getId()),
         List.of("ROLE_USER"), tokenValidMillisecond);
 
     return AuthDto.toDto(signInPlayer, token);
