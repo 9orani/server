@@ -2,10 +2,12 @@ package com.example.oidc.service;
 
 import com.example.oidc.dto.response.CommonResult;
 import com.example.oidc.dto.response.ListResult;
+import com.example.oidc.dto.response.PageResult;
 import com.example.oidc.dto.response.SingleResult;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service // 해당 Class가 Service임을 명시합니다.
@@ -50,6 +52,14 @@ public class ResponseService {
     ListResult<T> result = new ListResult<>();
     result.setList(list);
     setFailResult(result, code, msg);
+    return result;
+  }
+
+  // 다중건 결과를 처리하는 메소드
+  public <T> PageResult<T> getSuccessPageResult(Page<T> page) {
+    PageResult<T> result = new PageResult<>();
+    result.setPage(page);
+    setSuccessResult(result);
     return result;
   }
 

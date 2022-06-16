@@ -34,7 +34,7 @@ public class RoomEntity {
   @Column(name = "name", length = 100, nullable = false, unique = true)
   private String name;
 
-  @Column(name = "visit_code", length = 10, nullable = false)
+  @Column(name = "visit_code", length = 10, nullable = false, unique = true)
   private String visitCode;
 
   @CreationTimestamp
