@@ -12,7 +12,7 @@ public class AuthControllerTestSetup extends ApiControllerTestHelper {
 
   protected List<FieldDescriptor> generateGetRolesResponseFields(ResponseType type,
       String success, String code, String msg, FieldDescriptor... addDescriptors) {
-    String prefix = type.getReponseFieldPrefix();
+    String prefix = type.getResponseFieldPrefix();
     List<FieldDescriptor> commonFields = new ArrayList<>();
     commonFields.addAll(generateCommonResponseFields(success, code, msg));
     commonFields.addAll(List.of(

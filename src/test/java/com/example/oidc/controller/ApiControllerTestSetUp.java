@@ -7,6 +7,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 import com.example.oidc.config.security.JwtTokenProvider;
 import com.example.oidc.exception.ExceptionAdvice;
+import com.example.oidc.repository.PlayerRepository;
+import com.example.oidc.repository.RoomRepository;
+import com.example.oidc.service.auth.SignUpService;
 import com.example.oidc.service.util.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,9 +32,18 @@ public abstract class ApiControllerTestSetUp {
 
   /********* Repository Start ********/
 
+  @Autowired
+  protected RoomRepository roomRepository;
+
+  @Autowired
+  protected PlayerRepository playerRepository;
+
   /********* Service Start ********/
   @Autowired
   protected AuthService authService;
+
+  @Autowired
+  protected SignUpService signUpService;
 
   /********* Others Start ********/
   @Autowired
@@ -60,7 +72,7 @@ public abstract class ApiControllerTestSetUp {
         .apply(springSecurity())
         .apply(documentationConfiguration(restDocumentation)
             .operationPreprocessors()
-            .withRequestDefaults(modifyUris().host("test.com").removePort(), prettyPrint())
+            .withRequestDefaults(modifyUris().host("gorani.com").removePort(), prettyPrint())
             .withResponseDefaults(prettyPrint())
         )
         .build();

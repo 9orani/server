@@ -3,7 +3,7 @@ ifndef::snippets[]
 endif::[]
 // 자동으로 생성된 snippet 설정하는 부분
 
-= OIDC API 문서
+= 고라니 API 문서
 :icons: font
 // NOTE, TIP, WARNING, CAUTION, IMPORTANT 같은 경고구들 아이콘화 해줌
 :source-highlighter: highlight.js
@@ -18,3 +18,11 @@ endif::[]
 //== *관리자 페이지*
 
 //link:admin.html[API 문서 보기]
+
+== *인증 관련 API*
+
+link:auth.html[API 문서 보기]
+
+== *방 관련 API*
+
+link:room.html[API 문서 보기]
