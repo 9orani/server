@@ -28,7 +28,7 @@ public class RoomService {
 
     String visitCode = null;
     do {
-      visitCode = generateRandomAuthCode(VISIT_CODE_LENGTH);
+      visitCode = generateRandomVisitCode(VISIT_CODE_LENGTH);
     } while (roomRepository.existsRoomEntityByVisitCode(visitCode));
 
     roomInfo.setVisitCode(visitCode);
@@ -36,7 +36,7 @@ public class RoomService {
     return RoomDetailDto.toDto(roomRepository.save(roomInfo.toEntity(creator)));
   }
 
-  private String generateRandomAuthCode(int targetStringLength) {
+  private String generateRandomVisitCode(int targetStringLength) {
     int leftLimit = 48; // numeral '0'
     int rightLimit = 122; // letter 'z'
     Random random = new Random();
