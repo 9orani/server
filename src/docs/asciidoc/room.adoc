@@ -17,7 +17,7 @@ endif::[]
 
 == 고라니 API 목록
 
-link:oidc.html[CTF API 목록으로 돌아가기]
+link:oidc.html[고라니 API 목록으로 돌아가기]
 
 == *방 목록 조회*
 
