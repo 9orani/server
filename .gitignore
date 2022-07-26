@@ -71,3 +71,9 @@ docker/ESSENTIAL
 docker/ESSENTIAL.zip
 
 src/main/generated
+
+init.sql
+
+application
+dependencies
+spring-boot-loader
