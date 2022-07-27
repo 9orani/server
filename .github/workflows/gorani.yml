@@ -1,0 +1,69 @@
+name: Gorani Backend CI/CD
+
+on:
+  push:
+    branches: [main, develop, feature/CICD]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: AWS Setting
+        run: |
+          export AWS_ACCESS_KEY_ID=${{ secrets.NCP_ACCESS_KEY }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.NCP_SECRET_KEY }}
+
+      - name: Dokcer Login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.CONTAINER_REGISTRY }}
+          username: ${{ secrets.NCP_ACCESS_KEY }}
+          password: ${{ secrets.NCP_SECRET_KEY }}
+
+      - name: Pull Docker Images
+        run: |
+          docker pull ${{ secrets.CONTAINER_REGISTRY }}/${{ secrets.SPRING_IMAGE }}
+          docker pull ${{ secrets.CONTAINER_REGISTRY }}/${{ secrets.DB_IMAGE }}
+
+      - name: Create ENV File
+        working-directory: ./docker/builder
+        run: |
+          touch .env
+          echo "${{ secrets.DOCKER_ENV }}" >> .env
+          echo "CONTAINER_REGISTRY=${{ secrets.CONTAINER_REGISTRY }}" >> .env
+
+      - name: Start Docker
+        working-directory: ./docker/builder
+        run: docker-compose up -d
+
+      - name: Compress Jar
+        run: |
+          echo "Building..."
+          while [ ! -d application ];
+            do
+              sleep 1
+            done
+          echo "Compress"
+          sleep 5
+          tar -zcvf ${GITHUB_SHA::6}.tar.gz dependencies snapshot-dependencies spring-boot-loader application
+
+      - name: Upload
+        run: |
+          aws --endpoint-url=https://kr.object.ncloudstorage.com \
+          s3 cp ${GITHUB_SHA:6}.tar.gz s3://${{ secrets.UPLOAD_PATH }}
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/gorani
+            ./deploy.sh ${GITHUB_SHA:6}
