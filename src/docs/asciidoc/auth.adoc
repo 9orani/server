@@ -62,3 +62,25 @@ include::{snippets}/sign-in/http-response.adoc[]
 ==== Response Fields
 
 include::{snippets}/sign-in/response-fields.adoc[]
+
+== *JWT 유효성 검사*
+
+=== 요청
+
+==== Request
+
+include::{snippets}/check-jwt/http-request.adoc[]
+
+==== Request Fields
+
+include::{snippets}/check-jwt/request-fields.adoc[]
+
+=== 응답
+
+==== Response
+
+include::{snippets}/check-jwt/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/check-jwt/response-fields.adoc[]

@@ -1,6 +1,5 @@
 package com.example.oidc.dto.room;
 
-import com.example.oidc.dto.player.PlayerDetailDto;
 import com.example.oidc.dto.player.PlayerDto;
 import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.entity.RoomEntity;

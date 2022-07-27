@@ -123,6 +123,23 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
     return commonFields;
   }
 
+  public List<FieldDescriptor> generatePlayerDtoResponseFields(ResponseType type,
+      String success, String code, String msg, FieldDescriptor... addDescriptors) {
+    String prefix = type.getResponseFieldPrefix();
+    List<FieldDescriptor> commonFields = new ArrayList<>();
+    commonFields.addAll(generateCommonResponseFields(success, code, msg));
+    commonFields.addAll(Arrays.asList(
+        fieldWithPath(prefix + ".id").description("유저 고유 ID"),
+        fieldWithPath(prefix + ".loginId").description("로그인 아이디"),
+        fieldWithPath(prefix + ".emailAddress").description("이메일 주소"),
+        fieldWithPath(prefix + ".username").description("닉네임")
+    ));
+    if (addDescriptors.length > 0) {
+      commonFields.addAll(Arrays.asList(addDescriptors));
+    }
+    return commonFields;
+  }
+
   public List<FieldDescriptor> generateAuthDtoResponseFields(ResponseType type,
       String success, String code, String msg, FieldDescriptor... addDescriptors) {
     String prefix = type.getResponseFieldPrefix();
@@ -139,6 +156,32 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
       commonFields.addAll(Arrays.asList(addDescriptors));
     }
     return commonFields;
+  }
+
+  public List<FieldDescriptor> generatePlayerDetailDtoResponseFields(ResponseType type,
+      String success, String code, String msg, String dtoName, FieldDescriptor... addDescriptors) {
+    String prefix = type.getResponseFieldPrefix();
+    List<FieldDescriptor> commonFields = new ArrayList<>();
+    commonFields.addAll(generateCommonResponseFields(success, code, msg));
+    commonFields.addAll(Arrays.asList(
+        fieldWithPath(prefix + dtoName + ".id").description("유저 고유 ID"),
+        fieldWithPath(prefix + dtoName + ".loginId").description("로그인 아이디"),
+        fieldWithPath(prefix + dtoName + ".emailAddress").description("이메일 주소"),
+        fieldWithPath(prefix + dtoName + ".username").description("닉네임"),
+        fieldWithPath(prefix + dtoName + ".registerTime").description("가입 시간"),
+        fieldWithPath(prefix + dtoName + ".recentLoginTime").description("최근 로그인 시간"),
+        fieldWithPath(prefix + dtoName + ".createRoomList").description("생성한 방 목록"),
+        fieldWithPath(prefix + dtoName + ".joinRoomList").description("접속한 방 목록")
+    ));
+    if (addDescriptors.length > 0) {
+      commonFields.addAll(Arrays.asList(addDescriptors));
+    }
+    return commonFields;
+  }
+
+  public List<FieldDescriptor> generatePlayerDetailDtoResponseFields(ResponseType type,
+      String success, String code, String msg, FieldDescriptor... addDescriptors) {
+    return generatePlayerDetailDtoResponseFields(type, success, code, msg, "", addDescriptors);
   }
 
   public List<FieldDescriptor> generateRoomDtoResponseFields(ResponseType type,

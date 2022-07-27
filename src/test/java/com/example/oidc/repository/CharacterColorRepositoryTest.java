@@ -1,7 +1,6 @@
 package com.example.oidc.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.oidc.entity.CharacterColorEntity;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.example.oidc.exception;
 
-import com.example.oidc.exception.sign.CustomAuthenticationEntryPointException;
 import com.example.oidc.dto.response.CommonResult;
+import com.example.oidc.exception.sign.CustomAuthenticationEntryPointException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.GetMapping;
