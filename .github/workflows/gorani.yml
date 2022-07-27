@@ -56,7 +56,7 @@ jobs:
       - name: Upload
         run: |
           aws --endpoint-url=https://kr.object.ncloudstorage.com \
-          s3 cp ${GITHUB_SHA:6}.tar.gz s3://${{ secrets.UPLOAD_PATH }}
+          s3 cp ${GITHUB_SHA:6}.tar.gz s3://${{ secrets.UPLOAD_PATH }}/${GITHUB_SHA:6}.tar.gz
 
       - name: Deploy
         uses: appleboy/ssh-action@master
