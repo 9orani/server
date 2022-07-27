@@ -5,7 +5,7 @@ services:
     container_name: spring
     image: ${CONTAINER_REGISTRY}/gorani-spring:build
     volumes:
-      - ../:/home/gorani
+      - ../..:/home/gorani
     environment:
       - SECRET=${SECRET}
       - POSTGRES_USER=${POSTGRES_USER}
