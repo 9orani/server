@@ -1,7 +1,5 @@
 package com.example.oidc.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.example.oidc.entity.CharacterColorEntity;
 import com.example.oidc.entity.CharacterRoleEntity;
 import com.example.oidc.entity.PlayerEntity;

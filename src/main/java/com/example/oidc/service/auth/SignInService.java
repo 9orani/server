@@ -4,7 +4,6 @@ import static com.example.oidc.config.security.JwtTokenProvider.tokenValidMillis
 
 import com.example.oidc.config.security.JwtTokenProvider;
 import com.example.oidc.dto.player.AuthDto;
-import com.example.oidc.dto.player.PlayerDetailDto;
 import com.example.oidc.dto.player.PlayerDto;
 import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.exception.player.CustomPlayerNotFoundException;

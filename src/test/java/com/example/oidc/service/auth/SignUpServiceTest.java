@@ -2,7 +2,6 @@ package com.example.oidc.service.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.oidc.config.security.JwtTokenProvider;
 import com.example.oidc.dto.player.AuthDto;
 import com.example.oidc.dto.player.PlayerDto;
 import io.jsonwebtoken.Claims;

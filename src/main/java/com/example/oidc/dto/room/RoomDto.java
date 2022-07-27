@@ -1,13 +1,8 @@
 package com.example.oidc.dto.room;
 
-import com.example.oidc.dto.player.PlayerDto;
-import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.entity.RoomEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

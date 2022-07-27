@@ -1,10 +1,10 @@
 package com.example.oidc.exception;
 
+import com.example.oidc.dto.response.CommonResult;
 import com.example.oidc.exception.player.CustomPlayerNotFoundException;
 import com.example.oidc.exception.sign.CustomAuthenticationEntryPointException;
 import com.example.oidc.exception.sign.CustomLoginIdSigninFailedException;
 import com.example.oidc.exception.sign.CustomSignUpFailedException;
-import com.example.oidc.dto.response.CommonResult;
 import com.example.oidc.service.ResponseService;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

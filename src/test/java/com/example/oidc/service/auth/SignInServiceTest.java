@@ -1,7 +1,6 @@
 package com.example.oidc.service.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.oidc.dto.player.AuthDto;
 import com.example.oidc.dto.player.PlayerDto;
