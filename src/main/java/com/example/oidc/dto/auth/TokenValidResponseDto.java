@@ -1,9 +1,8 @@
 package com.example.oidc.dto.auth;
 
+import com.example.oidc.dto.player.PlayerDetailDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,4 +18,5 @@ public class TokenValidResponseDto {
   private boolean valid;
   private String tokenMsg;
   private String token;
+  private PlayerDetailDto playerInfo;
 }

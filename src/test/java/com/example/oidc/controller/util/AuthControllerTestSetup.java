@@ -20,6 +20,8 @@ public class AuthControllerTestSetup extends ApiControllerTestHelper {
         fieldWithPath(prefix + ".tokenMsg").description("유효하면 성공하였습니다.\n유효하지 않으면 유효하지 않은 이유 반환"),
         fieldWithPath(prefix + ".token").description("사용자가 보낸 token")
     ));
+    commonFields.addAll(
+        generatePlayerDetailDtoResponseFields(type, success, code, msg, ".playerInfo"));
     if (addDescriptors.length > 0) {
       commonFields.addAll(Arrays.asList(addDescriptors));
     }

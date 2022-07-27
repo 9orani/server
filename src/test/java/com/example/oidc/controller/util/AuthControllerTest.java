@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.oidc.dto.auth.TokenValidRequestDto;
+import com.example.oidc.entity.PlayerEntity;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -27,13 +28,14 @@ class AuthControllerTest extends AuthControllerTestSetup {
   @Test
   @DisplayName("JWT 유효성 검사 성공")
   public void checkJwtSuccess() throws Exception {
+    PlayerEntity playerEntity = generatePlayerEntity();
     long validTime = 1000L * 60 * 60;
     String validToken = jwtTokenProvider.
-        createToken(String.valueOf(userPk), roles, validTime);
+        createToken(String.valueOf(playerEntity.getId()), roles, validTime);
     TokenValidRequestDto content = TokenValidRequestDto.builder().token(validToken).build();
 
-    String docSuccess = "성공: true +\n실패: false";
-    String docCode = "성공할 경우 0\n";
+    String docSuccess = "성공: true +\nDB 상에 보낸 JWT에 해당하는 Player가 없으면 실패: false";
+    String docCode = "성공할 경우 0\nDB 상에 보낸 JWT에 해당하는 Player가 없으면 실패: -1000";
     String docMsg = "";
     mockMvc.perform(post("/v1/jwt/check")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -45,6 +47,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.data.valid").value(true))
         .andExpect(jsonPath("$.data.tokenMsg").value("유효한 토큰입니다."))
         .andExpect(jsonPath("$.data.token").value(validToken))
+//        .andExpect(jsonPath("$.data.playerInfo").value(validToken))
         .andDo(document("check-jwt",
             requestFields(
                 fieldWithPath("token").description("유저 토큰 ('Bearer'를 붙여야 합니다)")

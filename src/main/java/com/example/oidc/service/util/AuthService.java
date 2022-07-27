@@ -1,8 +1,9 @@
 package com.example.oidc.service.util;
 
-import com.example.oidc.config.security.JwtTokenProvider;
 import com.example.oidc.dto.auth.TokenValidResponseDto;
+import com.example.oidc.dto.player.PlayerDetailDto;
 import com.example.oidc.entity.PlayerEntity;
+import com.example.oidc.exception.player.CustomPlayerNotFoundException;
 import com.example.oidc.repository.PlayerRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -26,7 +27,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-  private final JwtTokenProvider jwtTokenProvider;
   private final PlayerRepository playerRepository;
 
   @Value("${spring.jwt.secret}")
@@ -38,10 +38,14 @@ public class AuthService {
   }
 
   public TokenValidResponseDto checkTokenValid(String token) {
-    System.out.println("secretKey = " + secretKey);
+    Long jwtMemberId = null;
     try {
       String tokenInfo = resolveToken(token);
-      Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenInfo);
+      jwtMemberId = Long.valueOf(Jwts.parser()
+          .setSigningKey(secretKey)
+          .parseClaimsJws(tokenInfo)
+          .getBody()
+          .getSubject());
     } catch (MalformedJwtException e) {
       return getTokenValidResponseDto(false, "손상된 토큰입니다.", token);
     } catch (ExpiredJwtException e) {
@@ -55,7 +59,14 @@ public class AuthService {
     } catch (Exception e) {
       return getTokenValidResponseDto(false, "알 수 없는 이유로 유효하지 않은 토큰입니다.", token);
     }
-    return getTokenValidResponseDto(true, "유효한 토큰입니다.", token);
+    return getTokenValidResponseDto(true, "유효한 토큰입니다.", token,
+        getPlayerDetailDtoById(jwtMemberId));
+  }
+
+  private PlayerDetailDto getPlayerDetailDtoById(Long memberId) {
+    PlayerEntity member = playerRepository.findById(memberId)
+        .orElseThrow(CustomPlayerNotFoundException::new);
+    return PlayerDetailDto.toDto(member);
   }
 
   private String resolveToken(String token) {
@@ -72,11 +83,18 @@ public class AuthService {
   }
 
   private TokenValidResponseDto getTokenValidResponseDto(boolean isValid, String tokenMsg,
-      String token) {
+      String token, PlayerDetailDto playerDetailDto) {
     return TokenValidResponseDto.builder()
         .valid(isValid)
         .tokenMsg(tokenMsg)
-        .token(token).build();
+        .token(token)
+        .playerInfo(playerDetailDto)
+        .build();
+  }
+
+  private TokenValidResponseDto getTokenValidResponseDto(boolean isValid, String tokenMsg,
+      String token) {
+    return getTokenValidResponseDto(isValid, tokenMsg, token, null);
   }
 
   public List<String> getRolesByJWT() {
