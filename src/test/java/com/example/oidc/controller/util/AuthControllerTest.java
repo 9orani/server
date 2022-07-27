@@ -1,5 +1,11 @@
 package com.example.oidc.controller.util;
 
+import static com.example.oidc.service.util.AuthService.JwtMessage.EMPTY;
+import static com.example.oidc.service.util.AuthService.JwtMessage.EXPIRED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.MALFORMED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.VALID;
+import static com.example.oidc.service.util.AuthService.JwtMessage.WRONG_FORMAT;
+import static com.example.oidc.service.util.AuthService.JwtMessage.WRONG_SIGNATURE;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -45,7 +51,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.data.valid").value(true))
-        .andExpect(jsonPath("$.data.tokenMsg").value("유효한 토큰입니다."))
+        .andExpect(jsonPath("$.data.tokenMsg").value(VALID.name()))
         .andExpect(jsonPath("$.data.token").value(validToken))
 //        .andExpect(jsonPath("$.data.playerInfo").value(validToken))
         .andDo(document("check-jwt",
@@ -71,7 +77,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.data.valid").value(false))
-        .andExpect(jsonPath("$.data.tokenMsg").value("토큰이 비어있습니다."))
+        .andExpect(jsonPath("$.data.tokenMsg").value(EMPTY.name()))
         .andExpect(jsonPath("$.data.token").value(""));
   }
 
@@ -93,7 +99,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.data.valid").value(false))
-        .andExpect(jsonPath("$.data.tokenMsg").value("토큰 형식이 잘못되었습니다. 'Bearer 토큰' 형식으로 전달되어야 합니다."))
+        .andExpect(jsonPath("$.data.tokenMsg").value(WRONG_FORMAT.name()))
         .andExpect(jsonPath("$.data.token").value(invalidToken));
   }
 
@@ -115,7 +121,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.data.valid").value(false))
-        .andExpect(jsonPath("$.data.tokenMsg").value("손상된 토큰입니다."))
+        .andExpect(jsonPath("$.data.tokenMsg").value(MALFORMED.name()))
         .andExpect(jsonPath("$.data.token").value(invalidToken));
   }
 
@@ -137,7 +143,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.data.valid").value(false))
-        .andExpect(jsonPath("$.data.tokenMsg").value("시그니처 검증에 실패한 토큰입니다."))
+        .andExpect(jsonPath("$.data.tokenMsg").value(WRONG_SIGNATURE.name()))
         .andExpect(jsonPath("$.data.token").value(invalidToken));
   }
 
@@ -157,7 +163,7 @@ class AuthControllerTest extends AuthControllerTestSetup {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.data.valid").value(false))
-        .andExpect(jsonPath("$.data.tokenMsg").value("만료된 토큰입니다."))
+        .andExpect(jsonPath("$.data.tokenMsg").value(EXPIRED.name()))
         .andExpect(jsonPath("$.data.token").value(invalidToken));
   }
 

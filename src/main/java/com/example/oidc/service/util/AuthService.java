@@ -1,5 +1,14 @@
 package com.example.oidc.service.util;
 
+import static com.example.oidc.service.util.AuthService.JwtMessage.EMPTY;
+import static com.example.oidc.service.util.AuthService.JwtMessage.EXPIRED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.MALFORMED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.UNKNOWN;
+import static com.example.oidc.service.util.AuthService.JwtMessage.UNSUPPORTED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.VALID;
+import static com.example.oidc.service.util.AuthService.JwtMessage.WRONG_FORMAT;
+import static com.example.oidc.service.util.AuthService.JwtMessage.WRONG_SIGNATURE;
+
 import com.example.oidc.dto.auth.TokenValidResponseDto;
 import com.example.oidc.dto.player.PlayerDetailDto;
 import com.example.oidc.entity.PlayerEntity;
@@ -47,19 +56,19 @@ public class AuthService {
           .getBody()
           .getSubject());
     } catch (MalformedJwtException e) {
-      return getTokenValidResponseDto(false, "손상된 토큰입니다.", token);
+      return getTokenValidResponseDto(false, MALFORMED.name(), token);
     } catch (ExpiredJwtException e) {
-      return getTokenValidResponseDto(false, "만료된 토큰입니다.", token);
+      return getTokenValidResponseDto(false, EXPIRED.name(), token);
     } catch (UnsupportedJwtException e) {
-      return getTokenValidResponseDto(false, "지원하지 않는 토큰입니다.", token);
+      return getTokenValidResponseDto(false, UNSUPPORTED.name(), token);
     } catch (SignatureException e) {
-      return getTokenValidResponseDto(false, "시그니처 검증에 실패한 토큰입니다.", token);
+      return getTokenValidResponseDto(false, WRONG_SIGNATURE.name(), token);
     } catch (IllegalArgumentException e) {
       return getTokenValidResponseDto(false, e.getMessage(), token);
     } catch (Exception e) {
-      return getTokenValidResponseDto(false, "알 수 없는 이유로 유효하지 않은 토큰입니다.", token);
+      return getTokenValidResponseDto(false, UNKNOWN.name(), token);
     }
-    return getTokenValidResponseDto(true, "유효한 토큰입니다.", token,
+    return getTokenValidResponseDto(true, VALID.name(), token,
         getPlayerDetailDtoById(jwtMemberId));
   }
 
@@ -71,13 +80,13 @@ public class AuthService {
 
   private String resolveToken(String token) {
     if (token == null || token.isEmpty()) {
-      throw new IllegalArgumentException("토큰이 비어있습니다.");
+      throw new IllegalArgumentException(EMPTY.name());
     }
     String[] parts = token.split(" ");
     System.out.println("parts = " + Arrays.toString(parts));
     String type = parts[0];
     if (parts.length != 2 || !type.equals("Bearer")) {
-      throw new IllegalArgumentException("토큰 형식이 잘못되었습니다. 'Bearer 토큰' 형식으로 전달되어야 합니다.");
+      throw new IllegalArgumentException(WRONG_FORMAT.name());
     }
     return parts[1];
   }
@@ -122,5 +131,19 @@ public class AuthService {
       throw new AccessDeniedException("");
     }
     return member.get();
+  }
+
+  public enum JwtMessage {
+    MALFORMED("손상된 토큰입니다."),
+    EXPIRED("만료된 토큰입니다."),
+    UNSUPPORTED("지원하지 않는 토큰입니다."),
+    WRONG_SIGNATURE("시그니처 검증에 실패한 토큰입니다."),
+    UNKNOWN("알 수 없는 이유로 유효하지 않은 토큰입니다."),
+    EMPTY("토큰이 비어있습니다."),
+    WRONG_FORMAT("토큰 형식이 잘못되었습니다. 'Bearer 토큰' 형식으로 전달되어야 합니다."),
+    VALID("유효한 토큰입니다.");
+
+    JwtMessage(String msg) {
+    }
   }
 }
