@@ -3,6 +3,7 @@ package com.example.oidc.service.util;
 import static com.example.oidc.service.util.AuthService.JwtMessage.EMPTY;
 import static com.example.oidc.service.util.AuthService.JwtMessage.EXPIRED;
 import static com.example.oidc.service.util.AuthService.JwtMessage.MALFORMED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.NOT_EXIST_PLAYER;
 import static com.example.oidc.service.util.AuthService.JwtMessage.UNKNOWN;
 import static com.example.oidc.service.util.AuthService.JwtMessage.UNSUPPORTED;
 import static com.example.oidc.service.util.AuthService.JwtMessage.VALID;
@@ -46,15 +47,16 @@ public class AuthService {
     secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
   }
 
-  public TokenValidResponseDto checkTokenValid(String token) {
-    Long jwtMemberId = null;
+  public TokenValidResponseDto tryCheckTokenValid(String token) {
     try {
       String tokenInfo = resolveToken(token);
-      jwtMemberId = Long.valueOf(Jwts.parser()
+      Long jwtMemberId = Long.valueOf(Jwts.parser()
           .setSigningKey(secretKey)
           .parseClaimsJws(tokenInfo)
           .getBody()
           .getSubject());
+      return getTokenValidResponseDto(true, VALID.name(), token,
+          getPlayerDetailDtoById(jwtMemberId));
     } catch (MalformedJwtException e) {
       return getTokenValidResponseDto(false, MALFORMED.name(), token);
     } catch (ExpiredJwtException e) {
@@ -65,11 +67,11 @@ public class AuthService {
       return getTokenValidResponseDto(false, WRONG_SIGNATURE.name(), token);
     } catch (IllegalArgumentException e) {
       return getTokenValidResponseDto(false, e.getMessage(), token);
+    } catch (CustomPlayerNotFoundException e) {
+      return getTokenValidResponseDto(true, NOT_EXIST_PLAYER.name(), token);
     } catch (Exception e) {
       return getTokenValidResponseDto(false, UNKNOWN.name(), token);
     }
-    return getTokenValidResponseDto(true, VALID.name(), token,
-        getPlayerDetailDtoById(jwtMemberId));
   }
 
   private PlayerDetailDto getPlayerDetailDtoById(Long memberId) {
@@ -141,7 +143,8 @@ public class AuthService {
     UNKNOWN("알 수 없는 이유로 유효하지 않은 토큰입니다."),
     EMPTY("토큰이 비어있습니다."),
     WRONG_FORMAT("토큰 형식이 잘못되었습니다. 'Bearer 토큰' 형식으로 전달되어야 합니다."),
-    VALID("유효한 토큰입니다.");
+    VALID("유효한 토큰입니다."),
+    NOT_EXIST_PLAYER("유효성 검증엔 성공했으나, 존재하지 않는 회원입니다.");
 
     JwtMessage(String msg) {
     }

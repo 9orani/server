@@ -3,6 +3,7 @@ package com.example.oidc.controller.util;
 import static com.example.oidc.service.util.AuthService.JwtMessage.EMPTY;
 import static com.example.oidc.service.util.AuthService.JwtMessage.EXPIRED;
 import static com.example.oidc.service.util.AuthService.JwtMessage.MALFORMED;
+import static com.example.oidc.service.util.AuthService.JwtMessage.NOT_EXIST_PLAYER;
 import static com.example.oidc.service.util.AuthService.JwtMessage.VALID;
 import static com.example.oidc.service.util.AuthService.JwtMessage.WRONG_FORMAT;
 import static com.example.oidc.service.util.AuthService.JwtMessage.WRONG_SIGNATURE;
@@ -28,7 +29,7 @@ import org.springframework.http.MediaType;
 //@Transactional
 class AuthControllerTest extends AuthControllerTestSetup {
 
-  private final Long userPk = 1L;
+  private final Long userPk = -1L;
   private final List<String> roles = new ArrayList<>(List.of("ROLE_USER", "ROLE_TEST"));
 
   @Test
@@ -40,8 +41,8 @@ class AuthControllerTest extends AuthControllerTestSetup {
         createToken(String.valueOf(playerEntity.getId()), roles, validTime);
     TokenValidRequestDto content = TokenValidRequestDto.builder().token(validToken).build();
 
-    String docSuccess = "성공: true +\nDB 상에 보낸 JWT에 해당하는 Player가 없으면 실패: false";
-    String docCode = "성공할 경우 0\nDB 상에 보낸 JWT에 해당하는 Player가 없으면 실패: -1000";
+    String docSuccess = "성공: true +\n";
+    String docCode = "성공할 경우 0\n";
     String docMsg = "";
     mockMvc.perform(post("/v1/jwt/check")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -62,6 +63,30 @@ class AuthControllerTest extends AuthControllerTestSetup {
                 generateTokenValidResponseFields(ResponseType.SINGLE, docSuccess, docCode, docMsg)
             )
         ));
+  }
+
+  @Test
+  @DisplayName("JWT 유효성 검사는 성공했지만 존재하지 않는 플레이어")
+  public void checkJwtSuccessButNotExistPlayer() throws Exception {
+    long validTime = 1000L * 60 * 60;
+    String validToken = jwtTokenProvider.
+        createToken(String.valueOf(userPk), roles, validTime);
+    TokenValidRequestDto content = TokenValidRequestDto.builder().token(validToken).build();
+
+    String docSuccess = "성공: true +\n";
+    String docCode = "성공할 경우 0\n";
+    String docMsg = "";
+    mockMvc.perform(post("/v1/jwt/check")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(asJsonString(content)))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.code").value(0))
+        .andExpect(jsonPath("$.data.valid").value(true))
+        .andExpect(jsonPath("$.data.tokenMsg").value(NOT_EXIST_PLAYER.name()))
+        .andExpect(jsonPath("$.data.token").value(validToken))
+        .andExpect(jsonPath("$.data.playerInfo").isEmpty());
   }
 
   @Test

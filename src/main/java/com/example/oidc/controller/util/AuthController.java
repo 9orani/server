@@ -26,7 +26,7 @@ public class AuthController {
   @PostMapping("/check")
   public SingleResult<TokenValidResponseDto> checkJwtValid(
       @RequestBody TokenValidRequestDto token) {
-    return responseService.getSuccessSingleResult(authService.checkTokenValid(token.getToken()));
+    return responseService.getSuccessSingleResult(authService.tryCheckTokenValid(token.getToken()));
   }
 
   @GetMapping("/roles")
