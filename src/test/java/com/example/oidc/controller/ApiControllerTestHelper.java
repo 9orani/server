@@ -193,7 +193,8 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
         fieldWithPath(prefix + ".id").description("방 고유 ID"),
         fieldWithPath(prefix + ".name").description("방 이름"),
         fieldWithPath(prefix + ".visitCode").description("방 접속 코드"),
-        fieldWithPath(prefix + ".maxPlayer").description("최대 플레이어 수")
+        fieldWithPath(prefix + ".maxPlayer").description("최대 플레이어 수"),
+        fieldWithPath(prefix + ".currentPlayer").description("현재 플레이어 수")
     ));
     if (type.equals(ResponseType.PAGE)) {
       commonFields.addAll(Arrays.asList(
@@ -222,6 +223,7 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
     commonFields.addAll(generateRoomDtoResponseFields(type, success, code, msg));
     commonFields.addAll(Arrays.asList(
         fieldWithPath(prefix + ".createTime").description("생성한 시간"),
+        fieldWithPath(prefix + ".visitUrl").description("방 입장 URL"),
         subsectionWithPath(prefix + ".creatorPlayer").description("생성한 플레이어"),
         subsectionWithPath(prefix + ".joinPlayerList").description("참가한 플레이어 리스트")
     ));

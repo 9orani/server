@@ -3,13 +3,17 @@ package com.example.oidc.service.room;
 import com.example.oidc.dto.room.RoomDetailDto;
 import com.example.oidc.dto.room.RoomDto;
 import com.example.oidc.entity.PlayerEntity;
+import com.example.oidc.entity.RoomEntity;
+import com.example.oidc.exception.room.CustomEmptyRoomIsNotExistException;
 import com.example.oidc.repository.RoomRepository;
 import com.example.oidc.service.util.AuthService;
+import java.time.LocalDateTime;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +28,27 @@ public class RoomService {
     return roomRepository.findAll(pageable).map(RoomDto::toDto);
   }
 
+  @Transactional
   public RoomDetailDto createRoom(RoomDetailDto roomInfo) {
 
-    String visitCode = null;
+    RoomEntity emptyRoom = roomRepository.findFirstByNameIsNull()
+        .orElseThrow(CustomEmptyRoomIsNotExistException::new);
+    fillRoomInfoInEmptyRoom(roomInfo, emptyRoom);
+    return RoomDetailDto.toDto(roomRepository.save(emptyRoom));
+  }
+
+  private void fillRoomInfoInEmptyRoom(RoomDetailDto roomInfo, RoomEntity emptyRoom) {
+    String visitCode;
     do {
       visitCode = generateRandomVisitCode(VISIT_CODE_LENGTH);
     } while (roomRepository.existsRoomEntityByVisitCode(visitCode));
 
-    roomInfo.setVisitCode(visitCode);
     PlayerEntity creator = authService.getPlayerEntityWithJWT();
-    return RoomDetailDto.toDto(roomRepository.save(roomInfo.toEntity(creator)));
+    emptyRoom.setName(roomInfo.getName());
+    emptyRoom.setVisitCode(visitCode);
+    emptyRoom.setMaxPlayer(roomInfo.getMaxPlayer());
+    emptyRoom.setCreatorPlayerEntity(creator);
+    emptyRoom.setCreateTime(LocalDateTime.now());
   }
 
   private String generateRandomVisitCode(int targetStringLength) {

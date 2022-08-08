@@ -21,6 +21,7 @@ public class RoomDto {
   protected String name;
   protected String visitCode;
   protected Long maxPlayer;
+  protected Long currentPlayer;
 
   public static RoomDto toDto(RoomEntity room) {
     return RoomDto.builder()
@@ -28,6 +29,7 @@ public class RoomDto {
         .name(room.getName())
         .visitCode(room.getVisitCode())
         .maxPlayer(room.getMaxPlayer())
+        .currentPlayer(room.getCurrentPlayer())
         .build();
   }
 }
