@@ -31,22 +31,28 @@ public class RoomEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", length = 100, nullable = false, unique = true)
+  @Column(name = "name", length = 100, unique = true)
   private String name;
 
-  @Column(name = "visit_code", length = 10, nullable = false, unique = true)
+  @Column(name = "visit_code", length = 10, unique = true)
   private String visitCode;
 
   @CreationTimestamp
-  @Column(name = "create_time", nullable = false)
+  @Column(name = "create_time")
   private LocalDateTime createTime;
 
-  @Column(name = "max_player", nullable = false)
+  @Column(name = "max_player")
   private Long maxPlayer;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "creator_player_id", nullable = false)
   private PlayerEntity creatorPlayerEntity;
+
+  @Column(name = "visit_url", nullable = false, length = 500)
+  private String visitUrl;
+
+  @Column(name = "current_player", nullable = false)
+  private Long currentPlayer;
 
   @Builder.Default
   @OneToMany(mappedBy = "roomEntity")
