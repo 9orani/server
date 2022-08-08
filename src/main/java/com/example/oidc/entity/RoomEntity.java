@@ -57,6 +57,9 @@ public class RoomEntity {
   @Column(name = "visit_url", nullable = false, length = 500)
   private String visitUrl;
 
+  @Column(name = "visit_port", nullable = false)
+  private Integer visitPort;
+
   @Column(name = "current_player", nullable = false)
   private Long currentPlayer;
 

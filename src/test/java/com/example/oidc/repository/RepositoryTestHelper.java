@@ -4,6 +4,7 @@ import com.example.oidc.entity.CharacterColorEntity;
 import com.example.oidc.entity.CharacterRoleEntity;
 import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.entity.RoomEntity;
+import com.example.oidc.exception.room.CustomEmptyRoomIsNotExistException;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +57,13 @@ public class RepositoryTestHelper {
     String visitCode = "visitCode";
     Long maxPlayer = 10L;
 
-    RoomEntity roomEntity = RoomEntity.builder()
-        .name(name)
-        .visitCode(visitCode)
-        .createTime(LocalDateTime.now())
-        .maxPlayer(maxPlayer)
-        .creatorPlayerEntity(creator)
-        .build();
+    RoomEntity roomEntity = roomRepository.findFirstByNameIsNull()
+        .orElseThrow(CustomEmptyRoomIsNotExistException::new);
+    roomEntity.setName(name);
+    roomEntity.setVisitCode(visitCode);
+    roomEntity.setCreateTime(LocalDateTime.now());
+    roomEntity.setMaxPlayer(maxPlayer);
+    roomEntity.setCreatorPlayerEntity(creator);
     return roomRepository.save(roomEntity);
   }
 

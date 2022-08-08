@@ -224,6 +224,7 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
     commonFields.addAll(Arrays.asList(
         fieldWithPath(prefix + ".createTime").description("생성한 시간"),
         fieldWithPath(prefix + ".visitUrl").description("방 입장 URL"),
+        fieldWithPath(prefix + ".visitPort").description("방 입장 Port"),
         subsectionWithPath(prefix + ".creatorPlayer").description("생성한 플레이어"),
         subsectionWithPath(prefix + ".joinPlayerList").description("참가한 플레이어 리스트")
     ));

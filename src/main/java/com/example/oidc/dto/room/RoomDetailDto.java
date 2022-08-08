@@ -25,6 +25,8 @@ public class RoomDetailDto extends RoomDto {
   @JsonProperty(access = Access.READ_ONLY)
   protected String visitUrl;
   @JsonProperty(access = Access.READ_ONLY)
+  protected Integer visitPort;
+  @JsonProperty(access = Access.READ_ONLY)
   protected LocalDateTime createTime;
   @JsonProperty(access = Access.READ_ONLY)
   protected PlayerDto creatorPlayer;
@@ -40,6 +42,7 @@ public class RoomDetailDto extends RoomDto {
         .maxPlayer(room.getMaxPlayer())
         .currentPlayer(room.getCurrentPlayer())
         .visitUrl(room.getVisitUrl())
+        .visitPort(room.getVisitPort())
         .creatorPlayer(PlayerDto.toDto(room.getCreatorPlayerEntity()))
         .joinPlayerList(room.getJoinPlayerList().stream().map(
             roomPlayerJoinInfo -> PlayerDto.toDto(roomPlayerJoinInfo.getPlayerEntity())).toList())
