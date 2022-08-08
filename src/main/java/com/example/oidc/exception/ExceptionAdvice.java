@@ -2,6 +2,9 @@ package com.example.oidc.exception;
 
 import com.example.oidc.dto.response.CommonResult;
 import com.example.oidc.exception.player.CustomPlayerNotFoundException;
+import com.example.oidc.exception.room.CustomEmptyRoomIsNotExistException;
+import com.example.oidc.exception.room.CustomRoomNotFoundException;
+import com.example.oidc.exception.room.CustomRoomOvercapacityException;
 import com.example.oidc.exception.sign.CustomAuthenticationEntryPointException;
 import com.example.oidc.exception.sign.CustomLoginIdSigninFailedException;
 import com.example.oidc.exception.sign.CustomSignUpFailedException;
@@ -82,5 +85,29 @@ public class ExceptionAdvice {
       CustomPlayerNotFoundException e) {
     return responseService.getFailResult(Integer.parseInt(getMessage("playerNotFound.code")),
         e.getMessage() == null ? getMessage("playerNotFound.msg") : e.getMessage());
+  }
+
+  @ExceptionHandler(CustomEmptyRoomIsNotExistException.class)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public CommonResult emptyRoomIsNotExistException(CustomEmptyRoomIsNotExistException e) {
+    return responseService.getSuccessResult(
+        Integer.parseInt(getMessage("emptyRoomIsNotExist.code")),
+        e.getMessage() == null ? getMessage("emptyRoomIsNotExist.msg") : e.getMessage());
+  }
+
+  @ExceptionHandler(CustomRoomNotFoundException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public CommonResult roomNotFoundException(CustomRoomNotFoundException e) {
+    return responseService.getFailResult(
+        Integer.parseInt(getMessage("roomNotFound.code")),
+        e.getMessage() == null ? getMessage("roomNotFound.msg") : e.getMessage());
+  }
+
+  @ExceptionHandler(CustomRoomOvercapacityException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public CommonResult overcapacityException(CustomRoomOvercapacityException e) {
+    return responseService.getFailResult(
+        Integer.parseInt(getMessage("overcapacity.code")),
+        e.getMessage() == null ? getMessage("overcapacity.msg") : e.getMessage());
   }
 }

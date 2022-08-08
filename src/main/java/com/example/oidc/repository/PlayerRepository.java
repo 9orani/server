@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlayerRepository extends JpaRepository<PlayerEntity, Long> {
 
+  long VIRTUAL_MEMBER_ID = 1L;
+
   Optional<PlayerEntity> findByLoginId(String loginId);
 }

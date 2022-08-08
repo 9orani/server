@@ -7,6 +7,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 
 import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.entity.RoomEntity;
+import com.example.oidc.exception.room.CustomEmptyRoomIsNotExistException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,14 +65,17 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
 
   public RoomEntity generateRoomEntity(PlayerEntity creator, Long maxPlayer) {
     String uuid = UUID.randomUUID().toString().substring(0, 10);
-    return roomRepository.save(
-        RoomEntity.builder()
-            .name("name_" + uuid)
-            .visitCode(uuid)
-            .createTime(LocalDateTime.now())
-            .maxPlayer(maxPlayer)
-            .creatorPlayerEntity(creator)
-            .build());
+    String name = "roomName_" + uuid;
+    String visitCode = uuid;
+
+    RoomEntity roomEntity = roomRepository.findFirstByNameIsNull()
+        .orElseThrow(CustomEmptyRoomIsNotExistException::new);
+    roomEntity.setName(name);
+    roomEntity.setVisitCode(visitCode);
+    roomEntity.setCreateTime(LocalDateTime.now());
+    roomEntity.setMaxPlayer(maxPlayer);
+    roomEntity.setCreatorPlayerEntity(creator);
+    return roomRepository.save(roomEntity);
   }
 
   public List<FieldDescriptor> generateCommonResponseFields(String docSuccess, String docCode,
@@ -193,7 +197,8 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
         fieldWithPath(prefix + ".id").description("방 고유 ID"),
         fieldWithPath(prefix + ".name").description("방 이름"),
         fieldWithPath(prefix + ".visitCode").description("방 접속 코드"),
-        fieldWithPath(prefix + ".maxPlayer").description("최대 플레이어 수")
+        fieldWithPath(prefix + ".maxPlayer").description("최대 플레이어 수"),
+        fieldWithPath(prefix + ".currentPlayer").description("현재 플레이어 수")
     ));
     if (type.equals(ResponseType.PAGE)) {
       commonFields.addAll(Arrays.asList(
@@ -222,8 +227,25 @@ public class ApiControllerTestHelper extends ApiControllerTestSetUp {
     commonFields.addAll(generateRoomDtoResponseFields(type, success, code, msg));
     commonFields.addAll(Arrays.asList(
         fieldWithPath(prefix + ".createTime").description("생성한 시간"),
+        fieldWithPath(prefix + ".visitUrl").description("방 입장 URL"),
+        fieldWithPath(prefix + ".visitPort").description("방 입장 Port"),
         subsectionWithPath(prefix + ".creatorPlayer").description("생성한 플레이어"),
         subsectionWithPath(prefix + ".joinPlayerList").description("참가한 플레이어 리스트")
+    ));
+    if (addDescriptors.length > 0) {
+      commonFields.addAll(Arrays.asList(addDescriptors));
+    }
+    return commonFields;
+  }
+
+  public List<FieldDescriptor> generateEnterUrlResponseFields(ResponseType type,
+      String success, String code, String msg, FieldDescriptor... addDescriptors) {
+    String prefix = type.getResponseFieldPrefix();
+    List<FieldDescriptor> commonFields = new ArrayList<>();
+    commonFields.addAll(generateCommonResponseFields(success, code, msg));
+    commonFields.addAll(Arrays.asList(
+        fieldWithPath(prefix).description("redirect 할 URL\r\n"
+            + "visitCode가 일치하지 않을 경우 빈 문자열을 return합니다.")
     ));
     if (addDescriptors.length > 0) {
       commonFields.addAll(Arrays.asList(addDescriptors));

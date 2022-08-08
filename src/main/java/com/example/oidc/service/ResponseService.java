@@ -70,6 +70,14 @@ public class ResponseService {
     return result;
   }
 
+  public CommonResult getSuccessResult(int code, String msg) {
+    CommonResult result = new CommonResult();
+    result.setSuccess(true);
+    result.setCode(code);
+    result.setMsg(msg);
+    return result;
+  }
+
   public CommonResult getFailResult(int code, String msg) {
     CommonResult result = new CommonResult();
     result.setSuccess(false);

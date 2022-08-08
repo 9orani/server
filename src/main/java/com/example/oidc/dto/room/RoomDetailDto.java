@@ -1,7 +1,6 @@
 package com.example.oidc.dto.room;
 
 import com.example.oidc.dto.player.PlayerDto;
-import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.entity.RoomEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -24,6 +23,10 @@ import lombok.experimental.SuperBuilder;
 public class RoomDetailDto extends RoomDto {
 
   @JsonProperty(access = Access.READ_ONLY)
+  protected String visitUrl;
+  @JsonProperty(access = Access.READ_ONLY)
+  protected Integer visitPort;
+  @JsonProperty(access = Access.READ_ONLY)
   protected LocalDateTime createTime;
   @JsonProperty(access = Access.READ_ONLY)
   protected PlayerDto creatorPlayer;
@@ -37,20 +40,12 @@ public class RoomDetailDto extends RoomDto {
         .visitCode(room.getVisitCode())
         .createTime(room.getCreateTime())
         .maxPlayer(room.getMaxPlayer())
+        .currentPlayer(room.getCurrentPlayer())
+        .visitUrl(room.getVisitUrl())
+        .visitPort(room.getVisitPort())
         .creatorPlayer(PlayerDto.toDto(room.getCreatorPlayerEntity()))
         .joinPlayerList(room.getJoinPlayerList().stream().map(
             roomPlayerJoinInfo -> PlayerDto.toDto(roomPlayerJoinInfo.getPlayerEntity())).toList())
-        .build();
-  }
-
-  public RoomEntity toEntity(PlayerEntity creator) {
-    LocalDateTime toEntityTime = LocalDateTime.now();
-    return RoomEntity.builder()
-        .name(name)
-        .visitCode(visitCode)
-        .createTime(toEntityTime)
-        .maxPlayer(maxPlayer)
-        .creatorPlayerEntity(creator)
         .build();
   }
 }
