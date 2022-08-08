@@ -1,12 +1,16 @@
 package com.example.oidc.controller.room;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -111,6 +115,196 @@ class RoomControllerTest extends ApiControllerTestHelper {
             "emptyRoomIsNotExist.code", null, LocaleContextHolder.getLocale())))
         .andExpect(jsonPath("$.msg").value(messageSource.getMessage(
             "emptyRoomIsNotExist.msg", null, LocaleContextHolder.getLocale())));
+  }
+
+  @Test
+  void getEnterUrl() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 10L);
+
+    mockMvc.perform(get("/v1/rooms/{roomId}", room.getId())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token)
+            .param("visitCode", room.getVisitCode()))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.code").value(0))
+        .andExpect(jsonPath("$.msg").exists())
+        .andDo(document("get-enter-url",
+            pathParameters(
+                parameterWithName("roomId").description("방 ID")
+            ),
+            requestParameters(
+                parameterWithName("visitCode").description("접속할 방문 코드")
+            ),
+            responseFields(
+                generateEnterUrlResponseFields(ResponseType.SINGLE,
+                    "성공: true \r\n roomId에 해당하는 방이 없는 경우: false",
+                    "성공 시 0을 반환\r\n roomId에 해당하는 방이 없는 경우: " + messageSource.getMessage(
+                        "roomNotFound.code", null, LocaleContextHolder.getLocale()),
+                    "성공: 성공하였습니다 +\r\nroomId에 해당하는 방이 없는 경우: " + messageSource.getMessage(
+                        "roomNotFound.msg", null, LocaleContextHolder.getLocale())
+                )
+            )));
+  }
+
+  @Test
+  void getEnterUrlFailedByVisitCodeMismatch() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 10L);
+
+    mockMvc.perform(get("/v1/rooms/{roomId}", room.getId())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token)
+            .param("visitCode", "WRONG!"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.code").value(0))
+        .andExpect(jsonPath("$.msg").exists())
+        .andExpect(jsonPath("$.data").isEmpty());
+  }
+
+  @Test
+  void joinRoom() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 10L);
+
+    mockMvc.perform(post("/v1/rooms/port/{port}", room.getVisitPort())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.code").value(0))
+        .andExpect(jsonPath("$.msg").exists())
+        .andDo(document("join-room",
+            pathParameters(
+                parameterWithName("port").description("포트 번호")
+            ),
+            responseFields(
+                generateCommonResponseFields(
+                    "성공: true \r\n port에 해당하는 방이 없거나 방의 현재 플레이어 수가 가득 찬 경우: false",
+                    "성공 시 0을 반환\r\n port에 해당하는 방이 없는 경우: " + messageSource.getMessage(
+                        "roomNotFound.code", null, LocaleContextHolder.getLocale()) + "\r\n"
+                        + "방의 현재 플레이어 수가 가득 찬 경우: " + messageSource.getMessage(
+                        "overcapacity.code", null, LocaleContextHolder.getLocale()),
+                    "성공: 성공하였습니다 +\r\nport에 해당하는 방이 없는 경우: " + messageSource.getMessage(
+                        "roomNotFound.msg", null, LocaleContextHolder.getLocale()) + "\r\n"
+                        + "방의 현재 플레이어 수가 가득 찬 경우: " + messageSource.getMessage(
+                        "overcapacity.msg", null, LocaleContextHolder.getLocale())
+                )
+            )));
+  }
+
+  @Test
+  void joinRoomFailedByOvercapacity() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 0L);
+
+    mockMvc.perform(post("/v1/rooms/port/{port}", room.getVisitPort())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.code").value(messageSource.getMessage(
+            "overcapacity.code", null, LocaleContextHolder.getLocale())))
+        .andExpect(jsonPath("$.msg").value(messageSource.getMessage(
+            "overcapacity.msg", null, LocaleContextHolder.getLocale())));
+  }
+
+  @Test
+  void leaveRoom() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 10L);
+    setCurrentPlayerCount(room, 2);
+
+    mockMvc.perform(delete("/v1/rooms/port/{port}", room.getVisitPort())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.code").value(0))
+        .andExpect(jsonPath("$.msg").exists())
+        .andDo(document("leave-room",
+            pathParameters(
+                parameterWithName("port").description("포트 번호")
+            ),
+            responseFields(
+                generateCommonResponseFields(
+                    "성공: true \r\n port에 해당하는 방이 없거나 방의 현재 플레이어가 0명인 경우: false",
+                    "성공 시 0을 반환\r\n port에 해당하는 방이 없거나 방의 현재 플레이어가 0명인 경우: "
+                        + messageSource.getMessage(
+                        "roomNotFound.code", null, LocaleContextHolder.getLocale()) + "\r\n",
+                    "성공: 성공하였습니다 +\r\nport에 해당하는 방이 없거나 방의 현재 플레이어가 0명인 경우: "
+                        + messageSource.getMessage(
+                        "roomNotFound.msg", null, LocaleContextHolder.getLocale()) + "\r\n")
+            )
+        ));
+  }
+
+  @Test
+  void leaveRoomLastPlayerAndClearRoom() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 10L);
+    setCurrentPlayerCount(room, 1);
+
+    mockMvc.perform(delete("/v1/rooms/port/{port}", room.getVisitPort())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.code").value(0))
+        .andExpect(jsonPath("$.msg").exists());
+
+    assertThat(room.getName()).isNull();
+    assertThat(room.getVisitCode()).isNull();
+    assertThat(room.getMaxPlayer()).isNull();
+    assertThat(room.getCreateTime()).isNull();
+    assertThat(room.getCreatorPlayerEntity().getId()).isEqualTo(1L);
+  }
+
+
+  @Test
+  void leaveRoomFailedByNotExistRoom() throws Exception {
+
+    PlayerEntity player = generatePlayerEntity();
+    String token = getToken(player);
+    RoomEntity room = generateRoomEntity(player, 10L);
+    setCurrentPlayerCount(room, 0);
+
+    mockMvc.perform(delete("/v1/rooms/port/{port}", room.getVisitPort())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", token))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.code").value(messageSource.getMessage(
+            "roomNotFound.code", null, LocaleContextHolder.getLocale())))
+        .andExpect(jsonPath("$.msg").value(messageSource.getMessage(
+            "roomNotFound.msg", null, LocaleContextHolder.getLocale())));
+  }
+
+  private void setCurrentPlayerCount(RoomEntity room, int currentPlayerCount) {
+    for (int i = 0; i < currentPlayerCount; i++) {
+      room.increaseCurrentPlayer();
+    }
   }
 
   private void assignAllRoom() {
