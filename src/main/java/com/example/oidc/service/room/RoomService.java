@@ -25,7 +25,7 @@ public class RoomService {
   private final RoomRepository roomRepository;
 
   public Page<RoomDto> getRoomPage(Pageable pageable) {
-    return roomRepository.findAll(pageable).map(RoomDto::toDto);
+    return roomRepository.findAllByNameIsNotNull(pageable).map(RoomDto::toDto);
   }
 
   @Transactional

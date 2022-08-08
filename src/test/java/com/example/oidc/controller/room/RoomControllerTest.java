@@ -15,6 +15,7 @@ import com.example.oidc.controller.ApiControllerTestHelper;
 import com.example.oidc.dto.room.RoomDetailDto;
 import com.example.oidc.entity.PlayerEntity;
 import com.example.oidc.entity.RoomEntity;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -26,10 +27,9 @@ class RoomControllerTest extends ApiControllerTestHelper {
 
   @Test
   void getRoomPage() throws Exception {
-    PlayerEntity creator = generatePlayerEntity();
+    assignAllRoom();
 
-    int ROOM_COUNT = 25;
-    generateRoomsByRoomCount(creator, ROOM_COUNT);
+    PlayerEntity creator = generatePlayerEntity();
 
     String token = getToken(creator);
     mockMvc.perform(get("/v1/rooms")
@@ -42,7 +42,6 @@ class RoomControllerTest extends ApiControllerTestHelper {
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.code").value(0))
         .andExpect(jsonPath("$.msg").exists())
-//        .andExpect(jsonPath("$.page.content.length()").value(10))
         .andDo(document("get-room-list",
             pathParameters(
                 generateCommonPagingParameters("페이지 사이즈(default = 10)")
@@ -116,13 +115,12 @@ class RoomControllerTest extends ApiControllerTestHelper {
 
   private void assignAllRoom() {
     List<RoomEntity> allRoom = roomRepository.findAll();
-    allRoom.forEach(roomEntity -> roomEntity.setName(String.valueOf(roomEntity.getId())));
+    allRoom.forEach(roomEntity -> {
+      roomEntity.setName(String.valueOf(roomEntity.getId()));
+      roomEntity.setVisitCode(String.valueOf(roomEntity.getId()));
+      roomEntity.setMaxPlayer(5L);
+      roomEntity.setCreateTime(LocalDateTime.now());
+    });
     roomRepository.saveAll(allRoom);
-  }
-
-  private void generateRoomsByRoomCount(PlayerEntity creator, int ROOM_COUNT) {
-    for (int i = 0; i < ROOM_COUNT; i++) {
-      generateRoomEntity(creator, 10L);
-    }
   }
 }
