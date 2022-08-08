@@ -13,4 +13,6 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
   Optional<RoomEntity> findFirstByNameIsNull();
 
   Page<RoomEntity> findAllByNameIsNotNull(Pageable pageable);
+
+  Optional<RoomEntity> findByVisitPort(Integer visitPort);
 }

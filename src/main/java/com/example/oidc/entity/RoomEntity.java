@@ -66,4 +66,12 @@ public class RoomEntity {
   @Builder.Default
   @OneToMany(mappedBy = "roomEntity")
   List<RoomPlayerJoinEntity> joinPlayerList = new ArrayList<>();
+
+  public void decreaseCurrentPlayer() {
+    this.currentPlayer--;
+  }
+
+  public void increaseCurrentPlayer() {
+    this.currentPlayer++;
+  }
 }
