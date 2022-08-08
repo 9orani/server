@@ -174,12 +174,10 @@ class RoomControllerTest extends ApiControllerTestHelper {
   void joinRoom() throws Exception {
 
     PlayerEntity player = generatePlayerEntity();
-    String token = getToken(player);
     RoomEntity room = generateRoomEntity(player, 10L);
 
     mockMvc.perform(post("/v1/rooms/port/{port}", room.getVisitPort())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
@@ -208,12 +206,10 @@ class RoomControllerTest extends ApiControllerTestHelper {
   void joinRoomFailedByOvercapacity() throws Exception {
 
     PlayerEntity player = generatePlayerEntity();
-    String token = getToken(player);
     RoomEntity room = generateRoomEntity(player, 0L);
 
     mockMvc.perform(post("/v1/rooms/port/{port}", room.getVisitPort())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.success").value(false))
@@ -227,13 +223,11 @@ class RoomControllerTest extends ApiControllerTestHelper {
   void leaveRoom() throws Exception {
 
     PlayerEntity player = generatePlayerEntity();
-    String token = getToken(player);
     RoomEntity room = generateRoomEntity(player, 10L);
     setCurrentPlayerCount(room, 2);
 
     mockMvc.perform(delete("/v1/rooms/port/{port}", room.getVisitPort())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
@@ -260,13 +254,11 @@ class RoomControllerTest extends ApiControllerTestHelper {
   void leaveRoomLastPlayerAndClearRoom() throws Exception {
 
     PlayerEntity player = generatePlayerEntity();
-    String token = getToken(player);
     RoomEntity room = generateRoomEntity(player, 10L);
     setCurrentPlayerCount(room, 1);
 
     mockMvc.perform(delete("/v1/rooms/port/{port}", room.getVisitPort())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
@@ -285,13 +277,11 @@ class RoomControllerTest extends ApiControllerTestHelper {
   void leaveRoomFailedByNotExistRoom() throws Exception {
 
     PlayerEntity player = generatePlayerEntity();
-    String token = getToken(player);
     RoomEntity room = generateRoomEntity(player, 10L);
     setCurrentPlayerCount(room, 0);
 
     mockMvc.perform(delete("/v1/rooms/port/{port}", room.getVisitPort())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.success").value(false))

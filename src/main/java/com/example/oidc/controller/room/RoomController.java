@@ -26,23 +26,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/rooms")
-@Secured("ROLE_USER")
 public class RoomController {
 
   private final ResponseService responseService;
   private final RoomService roomService;
 
+  @Secured("ROLE_USER")
   @GetMapping
   public PageResult<RoomDto> getRoomPage(
       @PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable) {
     return responseService.getSuccessPageResult(roomService.getRoomPage(pageable));
   }
 
+  @Secured("ROLE_USER")
   @PostMapping
   public SingleResult<RoomDetailDto> createRoom(@RequestBody RoomDetailDto roomInfo) {
     return responseService.getSuccessSingleResult(roomService.createRoom(roomInfo));
   }
 
+  @Secured("ROLE_USER")
   @GetMapping("/{roomId}")
   public SingleResult<String> getEnterUrl(@PathVariable Long roomId,
       @RequestParam String visitCode) {
