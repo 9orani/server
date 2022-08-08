@@ -66,3 +66,76 @@ include::{snippets}/create-room/http-response.adoc[]
 ==== Response Fields
 
 include::{snippets}/create-room/response-fields.adoc[]
+
+== *방 코드로 URL 받아오기*
+
+=== 요청
+
+==== Request
+
+include::{snippets}/get-enter-url/http-request.adoc[]
+
+==== Path variables
+
+include::{snippets}/get-enter-url/path-parameters.adoc[]
+
+==== Request Params
+
+include::{snippets}/get-enter-url/request-parameters.adoc[]
+
+=== 응답
+
+==== Response
+
+include::{snippets}/get-enter-url/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/get-enter-url/response-fields.adoc[]
+
+== *방 입장하기 (webrtc)*
+
+=== 요청
+
+==== Request
+
+include::{snippets}/join-room/http-request.adoc[]
+
+==== Path variables
+
+include::{snippets}/join-room/path-parameters.adoc[]
+
+=== 응답
+
+==== Response
+
+include::{snippets}/join-room/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/join-room/response-fields.adoc[]
+
+== *방 나가기 (webrtc)*
+
+NOTE: 마지막 플레이어가 방을 나갈 경우 방이 없어집니다.
+따라서 마지막 플레이어가 방을 나갈 경우 새로 방을 생성해야 합니다.
+
+=== 요청
+
+==== Request
+
+include::{snippets}/leave-room/http-request.adoc[]
+
+==== Path variables
+
+include::{snippets}/leave-room/path-parameters.adoc[]
+
+=== 응답
+
+==== Response
+
+include::{snippets}/leave-room/http-response.adoc[]
+
+==== Response Fields
+
+include::{snippets}/leave-room/response-fields.adoc[]
