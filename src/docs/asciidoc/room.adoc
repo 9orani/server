@@ -79,10 +79,6 @@ include::{snippets}/get-enter-url/http-request.adoc[]
 
 include::{snippets}/get-enter-url/path-parameters.adoc[]
 
-==== Request Params
-
-include::{snippets}/get-enter-url/request-parameters.adoc[]
-
 === 응답
 
 ==== Response

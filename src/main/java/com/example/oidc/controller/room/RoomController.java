@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
@@ -45,10 +44,9 @@ public class RoomController {
   }
 
   @Secured("ROLE_USER")
-  @GetMapping("/{roomId}")
-  public SingleResult<String> getEnterUrl(@PathVariable Long roomId,
-      @RequestParam String visitCode) {
-    return responseService.getSuccessSingleResult(roomService.getEnterUrl(roomId, visitCode));
+  @GetMapping("/{visitCode}")
+  public SingleResult<String> getEnterUrl(@PathVariable String visitCode) {
+    return responseService.getSuccessSingleResult(roomService.getEnterUrl(visitCode));
   }
 
   @DeleteMapping("/port/{port}")

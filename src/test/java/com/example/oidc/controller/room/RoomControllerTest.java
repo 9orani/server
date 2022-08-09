@@ -10,7 +10,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -124,10 +123,9 @@ class RoomControllerTest extends ApiControllerTestHelper {
     String token = getToken(player);
     RoomEntity room = generateRoomEntity(player, 10L);
 
-    mockMvc.perform(get("/v1/rooms/{roomId}", room.getId())
+    mockMvc.perform(get("/v1/rooms/{visitCode}", room.getVisitCode())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token)
-            .param("visitCode", room.getVisitCode()))
+            .header("Authorization", token))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
@@ -135,17 +133,14 @@ class RoomControllerTest extends ApiControllerTestHelper {
         .andExpect(jsonPath("$.msg").exists())
         .andDo(document("get-enter-url",
             pathParameters(
-                parameterWithName("roomId").description("방 ID")
-            ),
-            requestParameters(
                 parameterWithName("visitCode").description("접속할 방문 코드")
             ),
             responseFields(
                 generateEnterUrlResponseFields(ResponseType.SINGLE,
-                    "성공: true \r\n roomId에 해당하는 방이 없는 경우: false",
-                    "성공 시 0을 반환\r\n roomId에 해당하는 방이 없는 경우: " + messageSource.getMessage(
+                    "성공: true \r\n visitCode 해당하는 방이 없는 경우: false",
+                    "성공 시 0을 반환\r\n visitCode 해당하는 방이 없는 경우: " + messageSource.getMessage(
                         "roomNotFound.code", null, LocaleContextHolder.getLocale()),
-                    "성공: 성공하였습니다 +\r\nroomId에 해당하는 방이 없는 경우: " + messageSource.getMessage(
+                    "성공: 성공하였습니다 +\r\nvisitCode 해당하는 방이 없는 경우: " + messageSource.getMessage(
                         "roomNotFound.msg", null, LocaleContextHolder.getLocale())
                 )
             )));
@@ -156,18 +151,17 @@ class RoomControllerTest extends ApiControllerTestHelper {
 
     PlayerEntity player = generatePlayerEntity();
     String token = getToken(player);
-    RoomEntity room = generateRoomEntity(player, 10L);
 
-    mockMvc.perform(get("/v1/rooms/{roomId}", room.getId())
+    mockMvc.perform(get("/v1/rooms/{visitCode}", "WRONG!")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", token)
-            .param("visitCode", "WRONG!"))
+            .header("Authorization", token))
         .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.success").value(true))
-        .andExpect(jsonPath("$.code").value(0))
-        .andExpect(jsonPath("$.msg").exists())
-        .andExpect(jsonPath("$.data").isEmpty());
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.code").value(messageSource.getMessage(
+            "roomNotFound.code", null, LocaleContextHolder.getLocale())))
+        .andExpect(jsonPath("$.msg").value(messageSource.getMessage(
+            "roomNotFound.msg", null, LocaleContextHolder.getLocale())));
   }
 
   @Test

@@ -73,13 +73,10 @@ public class RoomService {
     // 출처: https://www.baeldung.com/java-random-string
   }
 
-  public String getEnterUrl(Long roomId, String visitCode) {
-    RoomEntity roomEntity = roomRepository.findById(roomId)
+  public String getEnterUrl(String visitCode) {
+    RoomEntity roomEntity = roomRepository.findByVisitCode(visitCode)
         .orElseThrow(CustomRoomNotFoundException::new);
-    if (visitCode.equals(roomEntity.getVisitCode())) {
-      return roomEntity.getVisitUrl() + ":" + roomEntity.getVisitPort();
-    }
-    return "";
+    return roomEntity.getVisitUrl() + ":" + roomEntity.getVisitPort();
   }
 
   public CommonResult joinRoom(Integer port) {

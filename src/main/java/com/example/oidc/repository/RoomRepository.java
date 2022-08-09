@@ -15,4 +15,6 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
   Page<RoomEntity> findAllByNameIsNotNull(Pageable pageable);
 
   Optional<RoomEntity> findByVisitPort(Integer visitPort);
+
+  Optional<RoomEntity> findByVisitCode(String visitCode);
 }
